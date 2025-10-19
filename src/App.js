@@ -3,6 +3,7 @@ import Square from "./components/Square";
 import { faHeart as faHeartSolid, faHeartBroken } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaHeartBroken } from "react-icons/fa";
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
@@ -112,7 +113,7 @@ export default function Board() {
               onChange={() => setGameMode("single")}
             />
             <FontAwesomeIcon
-              icon={gameMode === "single" ? faHeartSolid : faHeartRegular}
+              icon={gameMode === "single" ? faHeartBroken : faHeartRegular}
               size="1x"
             />
             <span className="label-text">Single Player</span>
