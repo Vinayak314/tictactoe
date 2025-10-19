@@ -72,3 +72,32 @@ body {
   font-weight: bold;
   flex-direction: column;
 }
+
+
+/* Hide the native radio input */
+.custom-radio input[type="radio"] {
+  display: none;
+}
+
+/* Container for each option */
+.custom-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-right: 1rem;
+  user-select: none;
+  transition: transform 0.2s;
+}
+
+/* Text next to the icon */
+.label-text {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.mode-toggle{
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+

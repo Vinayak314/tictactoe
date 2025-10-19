@@ -1,21 +1,33 @@
 import { useState, useEffect } from "react";
 import Square from "./components/Square";
-import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { height } from "@fortawesome/free-solid-svg-icons/fa0";
+import { faHeart as faHeartSolid, faHeartBroken } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+  const [xIsNext, setXIsNext] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [gameMode, setGameMode] = useState("single");
   const winner = calculateWinner(squares);
+  const gameActive = squares.some(sq => sq !== null) && !winner;
   let status;
 
   useEffect(() => {
     if (winner) {
       setShowOverlay(true);
+    } else if (!winner && squares.every((sq) => sq !== null)) {
+      const timer = setTimeout(() => {
+        reset();
+      }, 1000);
+      return clearTimeout(timer);
     }
-  }, [winner]);
+
+    if (gameMode == "single" && xIsNext && !winner) {
+      const timer = setTimeout(() => makeBotMove(squares), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [winner, squares, xIsNext, gameMode]);
 
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) {
@@ -23,13 +35,29 @@ export default function Board() {
     }
 
     const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = "X";
+    if (gameMode === "two") {
+      nextSquares[i] = xIsNext ? "X" : "O";
+      setXIsNext(!xIsNext);
     } else {
       nextSquares[i] = "O";
+      setXIsNext(true);
     }
-    setXIsNext(!xIsNext);
+
     setSquares(nextSquares);
+  }
+
+  function makeBotMove(squares) {
+    const emptySquares = squares
+      .map((val, idx) => (val === null ? idx : null))
+      .filter((v) => v !== null);
+    if (emptySquares.length === 0 || calculateWinner(squares)) return;
+
+    const randomIndex =
+      emptySquares[Math.floor(Math.random() * emptySquares.length)];
+    const nextSquares = squares.slice();
+    nextSquares[randomIndex] = "X";
+    setSquares(nextSquares);
+    setXIsNext(false);
   }
 
   function calculateWinner(squares) {
@@ -57,33 +85,115 @@ export default function Board() {
   function reset() {
     setSquares(Array(9).fill(null));
     setShowOverlay(false);
-    setXIsNext(true);
+    setXIsNext(false);
   }
 
   if (winner) {
     status = "Winner: " + winner;
   } else {
-    status = (<>Next Player: {xIsNext ? "X" : <FontAwesomeIcon icon={faHeart} className="heart"/>}</>)
-   }
+    status = (
+      <>
+        Next Player:{" "}
+        {xIsNext ? "X" : <FontAwesomeIcon icon={faHeartSolid} className="heart" />}
+      </>
+    );
+  }
 
   return (
     <>
       <div className="center">
+        <div className="mode-toggle">
+          <label className="custom-radio">
+            <input
+              type="radio"
+              value="single"
+              checked={gameMode === "single"}
+              disabled={gameActive}
+              onChange={() => setGameMode("single")}
+            />
+            <FontAwesomeIcon
+              icon={gameMode === "single" ? faHeartSolid : faHeartRegular}
+              size="1x"
+            />
+            <span className="label-text">Single Player</span>
+          </label>
+
+          <label className="custom-radio">
+            <input
+              type="radio"
+              value="two"
+              checked={gameMode === "two"}
+              disabled={gameActive}
+              onChange={() => setGameMode("two")}
+            />
+            <FontAwesomeIcon
+              icon={gameMode === "two" ? faHeartSolid : faHeartRegular}
+              size="1x"
+            />
+            <span className="label-text">Two Player</span>
+          </label>
+        </div>
+
         <div className="status">{status}</div>
         <div className="board-row">
-          <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-          <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-          <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+          <Square
+            value={squares[0]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(0) : null
+            }
+          />
+          <Square
+            value={squares[1]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(1) : null
+            }
+          />
+          <Square
+            value={squares[2]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(2) : null
+            }
+          />
         </div>
         <div className="board-row">
-          <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-          <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-          <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
+          <Square
+            value={squares[3]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(3) : null
+            }
+          />
+          <Square
+            value={squares[4]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(4) : null
+            }
+          />
+          <Square
+            value={squares[5]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(5) : null
+            }
+          />
         </div>
         <div className="board-row">
-          <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-          <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-          <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+          <Square
+            value={squares[6]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(6) : null
+            }
+          />
+          <Square
+            value={squares[7]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(7) : null
+            }
+          />
+          <Square
+            value={squares[8]}
+            onSquareClick={() =>
+              !xIsNext || gameMode === "two" ? handleClick(8) : null
+            }
+          />
         </div>
 
         <div>
@@ -97,19 +207,26 @@ export default function Board() {
         {/* <button onClick={() => setShowOverlay(true)}>Show Overlay</button> */}
 
         {showOverlay && (
-          <div
-            className="overlay"
-          >
+          <div className="overlay">
             {winner == "O" ? (
               <>
-                <FontAwesomeIcon icon={faHeart} className="heart" style={{ fontSize: '30px' }}/>
-                <h1>You Stole My Heart :P</h1>
+                <FontAwesomeIcon
+                  icon={faHeartSolid}
+                  className="heart"
+                  style={{ fontSize: "30px" }}
+                />
+                <h1>You Won My Heart :P</h1>
               </>
-              ) : (
+            ) : (
               <>
-                <FontAwesomeIcon icon={faHeartBroken} className="heart" style={{ fontSize: '30px' }}/>
+                <FontAwesomeIcon
+                  icon={faHeartBroken}
+                  className="heart"
+                  style={{ fontSize: "30px" }}
+                />
                 <h1>You Broke My Heart :(</h1>
-              </>)}
+              </>
+            )}
             <div>
               <button className="restart" onClick={() => reset()}>
                 Restart Game
