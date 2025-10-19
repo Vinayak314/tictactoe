@@ -57,6 +57,7 @@ export default function Board() {
   function reset() {
     setSquares(Array(9).fill(null));
     setShowOverlay(false);
+    setXIsNext(true);
   }
 
   if (winner) {
