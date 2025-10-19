@@ -33,7 +33,7 @@ body {
 
 .status {
   margin-bottom: 10px;
-  font: bold;
+  font-weight: bold;
   font-size: 20px;
 }
 
@@ -49,8 +49,12 @@ body {
   border: 3px solid #E06B80;
   border-radius: 5px;
   margin-top: 10px;
-  font: bold;
+  font-weight: bold;
   font-size: 15px;
+}
+
+.heart{
+  background: transparent;
 }
 
 

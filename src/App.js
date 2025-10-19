@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import Square from "./components/Square";
+import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { height } from "@fortawesome/free-solid-svg-icons/fa0";
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
@@ -10,7 +13,7 @@ export default function Board() {
 
   useEffect(() => {
     if (winner) {
-      setShowOverlay(true); // ✅ safe inside useEffect
+      setShowOverlay(true);
     }
   }, [winner]);
 
@@ -23,7 +26,7 @@ export default function Board() {
     if (xIsNext) {
       nextSquares[i] = "X";
     } else {
-      nextSquares[i] = "💝";
+      nextSquares[i] = "O";
     }
     setXIsNext(!xIsNext);
     setSquares(nextSquares);
@@ -59,8 +62,8 @@ export default function Board() {
   if (winner) {
     status = "Winner: " + winner;
   } else {
-    status = "Next Player: " + (xIsNext ? "X" : "💝");
-  }
+    status = (<>Next Player: {xIsNext ? "X" : <FontAwesomeIcon icon={faHeart} className="heart"/>}</>)
+   }
 
   return (
     <>
@@ -96,7 +99,16 @@ export default function Board() {
           <div
             className="overlay"
           >
-            <h1>You Stole My Heart :P</h1>
+            {winner == "O" ? (
+              <>
+                <FontAwesomeIcon icon={faHeart} className="heart" style={{ fontSize: '30px' }}/>
+                <h1>You Stole My Heart :P</h1>
+              </>
+              ) : (
+              <>
+                <FontAwesomeIcon icon={faHeartBroken} className="heart" style={{ fontSize: '30px' }}/>
+                <h1>You Broke My Heart :(</h1>
+              </>)}
             <div>
               <button className="restart" onClick={() => reset()}>
                 Restart Game
